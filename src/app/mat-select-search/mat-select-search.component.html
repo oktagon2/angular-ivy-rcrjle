@@ -1,29 +1,27 @@
 <mat-form-field [appearance]="appearance">
-  <mat-label>{{ placeholder }}</mat-label>
-  <mat-select>
-    <!-- matInput inside mat-option which will be used to do the filtering -->
-    <!-- by subscribing to "filterFormControl.valueChanges.subscribe" -->
-    <mat-option disabled="true">
-      <mat-form-field [floatLabel]="'always'" fxFill>
-        <input
-          matInput
-          [placeholder]="searchPlaceholder"
-          [formControl]="filterFormControl"
-        />
-        <button
-          matSuffix
-          mat-icon-button
-          aria-label="company"
-          (click)="filterFormControl.setValue('')"
-        >
-          <mat-icon>clear</mat-icon>
-        </button>
-      </mat-form-field>
+<mat-label>{{placeholder}}</mat-label>
+<mat-select [formControl]="filterFormControl">
+  <mat-optgroup>
+    <mat-form-field [floatLabel]="'always'" fxFill>
+      <input matInput [placeholder]="searchPlaceholder" [formControl]="filterFormControl">
+      <button matSuffix mat-icon-button aria-label="company" (click)="filterFormControl.setValue('')">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-option disabled="true" style="display: none"></mat-option>
+  </mat-optgroup>
+
+
+  <div *ngIf="items | async as retrievedItems else waitingResponse">
+    <mat-option *ngFor="let item of retrievedItems" [value]="item[bindValueKey]">
+      <span>{{item[bindLabelKey]}}</span>
     </mat-option>
-    <!-- When items will be called by template we are sure that items is an observable -->
-    <!-- async pipe will do the subscription -->
-    <mat-option *ngFor="let item of items | async" [value]="item[bindValueKey]">
-      <span>{{ item[bindLabelKey] }}</span>
-    </mat-option>
-  </mat-select>
+  </div>
+
+  <ng-template #waitingResponse>
+    <mat-option disabled="true">Please Wait...</mat-option>
+  </ng-template>
+
+
+</mat-select>
 </mat-form-field>
